@@ -6,6 +6,6 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface CoinAPI {
-    @GET("assets?limit=14")
+    @GET("assets?limit=20")
     suspend fun getCoins(@Query("offset") offset: Int) : BaseResponse<List<Coin>>
 }
