@@ -4,27 +4,23 @@ import com.google.gson.annotations.SerializedName
 
 data class Coin(
     @SerializedName("id")
-    val id: String,
+    val id: String = "",
     @SerializedName("rank")
-    val rank: String,
+    val rank: String = "",
     @SerializedName("symbol")
-    val symbol: String,
+    val symbol: String = "",
     @SerializedName("name")
-    val name: String,
+    val name: String = "",
     @SerializedName("supply")
-    val supply: String,
+    val supply: Double? = 0.0,
     @SerializedName("maxSupply")
-    val maxSupply: String,
+    val maxSupply: Double? = 0.0,
     @SerializedName("marketCapUsd")
-    val marketCapUsd: String,
+    val marketCapUsd: Double? = 0.0,
     @SerializedName("volumeUsd24Hr")
-    val volumeUsd24Hr: String,
+    val volumeUsd24Hr: Double? = 0.0,
     @SerializedName("priceUsd")
-    val priceUsd: Double,
-    @SerializedName("changePercent24Hr")
-    val changePercent24Hr: String,
-    @SerializedName("vwap24Hr")
-    val vwap24Hr: String
+    val priceUsd: Double? = 0.0,
 )
 
 
