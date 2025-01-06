@@ -1,26 +1,25 @@
 package com.jop.cointracker.data.model
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class Coin(
-    @SerializedName("id")
-    val id: String = "",
-    @SerializedName("rank")
-    val rank: String = "",
+    @SerializedName("uuid")
+    val uuid: String = "",
     @SerializedName("symbol")
     val symbol: String = "",
     @SerializedName("name")
     val name: String = "",
-    @SerializedName("supply")
-    val supply: Double? = 0.0,
-    @SerializedName("maxSupply")
-    val maxSupply: Double? = 0.0,
-    @SerializedName("marketCapUsd")
-    val marketCapUsd: Double? = 0.0,
-    @SerializedName("volumeUsd24Hr")
-    val volumeUsd24Hr: Double? = 0.0,
-    @SerializedName("priceUsd")
-    val priceUsd: Double? = 0.0,
-)
+    @SerializedName("iconUrl")
+    val iconUrl: String = "",
+    @SerializedName("price")
+    val price: Double = 0.0,
+    @SerializedName("listedAt")
+    val listedAt: Int = 0,
+    @SerializedName("sparkline")
+    val sparkline: List<Double?> = listOf()
+): Parcelable
 
 
