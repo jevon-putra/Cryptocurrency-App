@@ -58,6 +58,7 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compose.runtime)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
@@ -84,6 +85,8 @@ dependencies {
     ksp(libs.dagger.hilt.compiler)
 
     implementation(libs.coil.ktx)
+    implementation(libs.coil.ktx.svg)
+    implementation(libs.coil.ktx.network)
 
     testImplementation(libs.junit)
 
