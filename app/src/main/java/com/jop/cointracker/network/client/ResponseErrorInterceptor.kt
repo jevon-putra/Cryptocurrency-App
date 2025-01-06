@@ -44,7 +44,7 @@ class ResponseErrorInterceptor : Interceptor {
     private fun parseResponse(jsonString: String?): String {
         var errorMessage = "Unknown"
         try {
-            val jsonObject = JSONObject(jsonString)
+            val jsonObject = JSONObject(jsonString.toString())
             if (jsonObject.has("message")) {
                 errorMessage = jsonObject.getString("message")
             }

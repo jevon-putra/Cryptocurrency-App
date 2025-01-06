@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.jop.cointracker.view.detailCoin.screen.DetailCoinScreen
 import com.jop.cointracker.view.home.screen.HomeScreen
 
 @Composable
@@ -22,11 +23,11 @@ fun NavigationRoute(modifier: Modifier){
         popEnterTransition = { scaleIn(tween(700), initialScale = 0.5f) + fadeIn(tween(50)) },
         popExitTransition = { scaleOut(tween(500), targetScale = 0.5f) + fadeOut(tween(50)) }
     ){
-        composable(Route.MAIN){
+        composable(route = Route.MAIN){
             HomeScreen(navController)
         }
-        composable(Route.DETAIL_COIN){
-
+        composable(route = Route.DETAIL_COIN){
+            DetailCoinScreen(navController)
         }
     }
 }

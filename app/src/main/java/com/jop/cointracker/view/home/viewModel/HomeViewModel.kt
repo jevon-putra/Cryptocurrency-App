@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.jop.cointracker.data.BaseState
 import com.jop.cointracker.data.Resource
 import com.jop.cointracker.data.model.Coin
+import com.jop.cointracker.data.model.Tag
 import com.jop.cointracker.data.repository.CoinRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -17,15 +18,16 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(private val repository: CoinRepository) : ViewModel(){
     private val _state = mutableStateOf(BaseState<MutableList<Coin>>())
     val state : State<BaseState<MutableList<Coin>>> = _state
+    val maxItem = 20
 
     init {
         getCoins(true)
     }
 
-    fun getCoins(refresh: Boolean = false){
-        val lastIndex = if(refresh) 0 else _state.value.data!!.lastIndex.plus(1)
+    fun getCoins(refresh: Boolean = false, keyword: String = "", tags: List<Tag> = listOf()){
+        val lastIndex = if(refresh) 0 else _state.value.data!!.size
 
-        repository.getCoins(lastIndex).onEach {
+        repository.getCoins(limit = maxItem, offset = lastIndex, symbol = keyword, tags = tags.map { it.value }).onEach {
             when(it){
                 is Resource.Loading -> {
                     if(refresh) _state.value = BaseState(isLoading = true)
