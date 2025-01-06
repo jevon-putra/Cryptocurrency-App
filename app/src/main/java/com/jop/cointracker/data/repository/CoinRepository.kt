@@ -9,11 +9,11 @@ import javax.inject.Inject
 
 class CoinRepository @Inject constructor(private val coinAPI: CoinAPI) {
 
-    fun getCoins(offset: Int) : Flow<Resource<List<Coin>>> = flow {
+    fun getCoins(limit: Int, offset: Int, symbol: String = "", tags: List<String> = listOf()) : Flow<Resource<List<Coin>>> = flow {
         try {
             emit(Resource.Loading())
-            val request = coinAPI.getCoins(offset)
-            emit(Resource.Success(data = request.data ?: mutableListOf()))
+            val request = coinAPI.getCoins(limit, offset, if(symbol.isNotEmpty()) listOf(symbol) else listOf(), tags)
+            emit(Resource.Success(data = request.data?.coins ?: mutableListOf()))
         } catch (e: Exception){
             emit(Resource.Error(message = e.message.toString()))
         }
