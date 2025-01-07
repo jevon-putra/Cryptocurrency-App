@@ -1,5 +1,6 @@
 package com.jop.cointracker.view.detailCoin.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -25,10 +27,12 @@ import com.jop.cointracker.data.model.Coin
 import com.jop.cointracker.data.model.Tag
 import com.jop.cointracker.data.model.getAllTimePeriods
 import com.jop.cointracker.ui.component.ChipTag
+import com.jop.cointracker.ui.component.ChipTagLoading
 import com.jop.cointracker.ui.component.CustomToolbar
 import com.jop.cointracker.ui.component.LineChart
 import com.jop.cointracker.ui.theme.PADDING_HALF
 import com.jop.cointracker.ui.theme.PADDING_MAIN
+import com.jop.cointracker.util.shimmerBackground
 import com.jop.cointracker.view.detailCoin.viewModel.DetailCoinViewModel
 import java.text.DecimalFormat
 import java.text.NumberFormat
@@ -105,24 +109,49 @@ fun DetailCoinScreen(navHostController: NavHostController, detailVM: DetailCoinV
                 }
             }
 
-            if(detailVM.stateCoinHistoryPrice.value.data?.isNotEmpty() == true){
-                LineChart(
-                    modifier = Modifier
-                        .height(120.dp)
-                        .fillMaxWidth(),
-                    list = detailVM.stateCoinHistoryPrice.value.data!!.sortedBy { it.timestamp }.map { it.price },
-                    isShowDifference = true
-                )
-            }
+            if(detailVM.stateCoinHistoryPrice.value.isLoading){
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(PADDING_MAIN)
+                ) {
+                    LineChart(
+                        modifier = Modifier.height(120.dp).fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.outlineVariant)
+                            .shimmerBackground()
+                    )
 
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                items(getAllTimePeriods()) { tag ->
-                    ChipTag(tag = tag, isSelected = timePeriodState.value == tag) {
-                        timePeriodState.value = tag
-                        detailVM.getCoinHistoryPrice(timePeriodState.value.value)
+                    LazyRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        items(getAllTimePeriods()) { tag ->
+                            ChipTagLoading(title = tag.title)
+                        }
+                    }
+                }
+            } else {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(PADDING_MAIN)
+                ) {
+                    if(detailVM.stateCoinHistoryPrice.value.data?.isNotEmpty() == true){
+                        LineChart(
+                            modifier = Modifier
+                                .height(120.dp)
+                                .fillMaxWidth(),
+                            list = detailVM.stateCoinHistoryPrice.value.data!!.sortedBy { it.timestamp }.map { it.price },
+                            isShowDifference = true
+                        )
+
+                        LazyRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            items(getAllTimePeriods()) { tag ->
+                                ChipTag(tag = tag, isSelected = timePeriodState.value == tag) {
+                                    timePeriodState.value = tag
+                                    detailVM.getCoinHistoryPrice(timePeriodState.value.value)
+                                }
+                            }
+                        }
                     }
                 }
             }

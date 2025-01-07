@@ -107,8 +107,8 @@ fun HomeScreen(navHostController: NavHostController, homeVM: HomeViewModel = hil
                     Indicator(
                         modifier = Modifier.align(Alignment.TopCenter),
                         isRefreshing = stateData.isLoading,
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        color = MaterialTheme.colorScheme.onSecondary,
                         state = refreshState
                     )
                 },

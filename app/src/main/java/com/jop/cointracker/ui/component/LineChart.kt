@@ -21,10 +21,10 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun LineChart(modifier: Modifier = Modifier, list: List<Double> = listOf(), isShowDifference: Boolean = false){
     val zipList: List<Pair<Double, Double>> = list.zipWithNext()
-    val first = list.first()
-    val last = list.last()
-    val max = list.max()
-    val min = list.min()
+    val first = if(list.isNotEmpty()) list.first() else 0.0
+    val last = if(list.isNotEmpty()) list.last() else 0.0
+    val max = if(list.isNotEmpty()) list.max() else 0.0
+    val min = if(list.isNotEmpty()) list.min() else 0.0
 
     Row(
         modifier = modifier

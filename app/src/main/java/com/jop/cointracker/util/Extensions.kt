@@ -31,7 +31,7 @@ fun Modifier.shimmerBackground(): Modifier = composed {
 
     val shimmerColors = listOf(
         Color.Transparent,
-        MaterialTheme.colorScheme.surfaceContainerLowest.copy(alpha = 0.35f),
+        MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
         Color.Transparent,
     )
 

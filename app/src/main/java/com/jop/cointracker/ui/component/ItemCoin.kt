@@ -117,7 +117,7 @@ fun ItemCoinLoading(){
         Box(
             modifier = Modifier
                 .clip(shape = RoundedCornerShape(PADDING_EXTRA))
-                .background(color = Color.Gray)
+                .background(color = MaterialTheme.colorScheme.outlineVariant)
                 .shimmerBackground()
                 .size(48.dp),
         )
@@ -128,16 +128,16 @@ fun ItemCoinLoading(){
                 modifier = Modifier.shimmerBackground(),
                 text = coin.name,
                 style = MaterialTheme.typography.bodyMedium.copy(
-                    color = Color.Gray,
-                    background = Color.Gray
+                    color = MaterialTheme.colorScheme.outlineVariant,
+                    background = MaterialTheme.colorScheme.outlineVariant
                 ),
             )
             Text(
                 modifier = Modifier.shimmerBackground(),
                 text = coin.symbol,
                 style = MaterialTheme.typography.bodySmall.copy(
-                    color = Color.Gray,
-                    background = Color.Gray
+                    color = MaterialTheme.colorScheme.outlineVariant,
+                    background = MaterialTheme.colorScheme.outlineVariant
                 )
             )
         }
@@ -150,8 +150,8 @@ fun ItemCoinLoading(){
                 modifier = Modifier.shimmerBackground(),
                 text = format.format(coin.price),
                 style = MaterialTheme.typography.bodyMedium.copy(
-                    color = Color.Gray,
-                    background = Color.Gray
+                    color = MaterialTheme.colorScheme.outlineVariant,
+                    background = MaterialTheme.colorScheme.outlineVariant
                 ),
                 overflow = TextOverflow.Ellipsis,
                 minLines = 1
@@ -160,8 +160,8 @@ fun ItemCoinLoading(){
                 modifier = Modifier.shimmerBackground(),
                 text = "+0%",
                 style = MaterialTheme.typography.bodySmall.copy(
-                    color = Color.Gray,
-                    background = Color.Gray
+                    color = MaterialTheme.colorScheme.outlineVariant,
+                    background = MaterialTheme.colorScheme.outlineVariant
                 )
             )
         }
