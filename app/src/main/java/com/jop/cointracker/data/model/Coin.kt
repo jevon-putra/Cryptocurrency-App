@@ -18,8 +18,16 @@ data class Coin(
     val price: Double = 0.0,
     @SerializedName("listedAt")
     val listedAt: Int = 0,
+    @SerializedName("rank")
+    val rank: Int = 0,
     @SerializedName("sparkline")
     val sparkline: List<Double?> = listOf()
-): Parcelable
+): Parcelable {
+    fun percentageIncrease() : Double{
+        val listPrice = sparkline.mapNotNull{ it }
+        val minPrice = if(sparkline.isNotEmpty()) listPrice.first() else 0.0
+        val maxPrice = if(sparkline.isNotEmpty()) listPrice.last() else 0.0
 
-
+        return ((maxPrice - minPrice) / minPrice) * 100
+    }
+}

@@ -31,8 +31,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -81,7 +79,7 @@ fun HomeScreen(navHostController: NavHostController, homeVM: HomeViewModel = hil
                     state = etSearch,
                     keyboardActions = KeyboardActions(
                         onSearch = {
-                            homeVM.getCoins(refresh = true, keyword = etSearch.value, stateSelectedTags.toList())
+                            homeVM.getCoins(refresh = true, keyword = etSearch.value, tags = stateSelectedTags.toList())
                         }
                     )
                 )
@@ -115,7 +113,7 @@ fun HomeScreen(navHostController: NavHostController, homeVM: HomeViewModel = hil
                     )
                 },
                 onRefresh = {
-                    homeVM.getCoins(refresh = true, keyword = etSearch.value, stateSelectedTags.toList())
+                    homeVM.getCoins(refresh = true, keyword = etSearch.value, tags = stateSelectedTags.toList())
                 }
             ) {
                 LazyColumn(
@@ -177,10 +175,12 @@ fun HomeScreen(navHostController: NavHostController, homeVM: HomeViewModel = hil
             FilterBottomSheet(
                 state = stateBottomSheet,
                 showBottomSheet = showBottomSheet,
-                stateSelectedTags = stateSelectedTags,
-                confirmOrClearAction = { isConfirm ->
-                    if(!isConfirm) stateSelectedTags.clear()
-                    homeVM.getCoins(refresh = true, keyword = etSearch.value, stateSelectedTags.toList())
+                selectedTags = stateSelectedTags,
+                confirmOrClearAction = { isConfirm, selected ->
+                    stateSelectedTags.clear()
+                    if(isConfirm) stateSelectedTags.addAll(selected)
+
+                    homeVM.getCoins(refresh = true, keyword = etSearch.value, tags = stateSelectedTags.toList())
                 },
             )
         }

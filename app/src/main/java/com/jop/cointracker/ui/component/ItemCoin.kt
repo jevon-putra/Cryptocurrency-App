@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,53 +27,79 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.jop.cointracker.R
 import com.jop.cointracker.data.model.Coin
+import com.jop.cointracker.ui.theme.PADDING_EXTRA
+import com.jop.cointracker.ui.theme.PADDING_HALF
+import com.jop.cointracker.ui.theme.PADDING_MAIN
 import com.jop.cointracker.util.shimmerBackground
+import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.Locale
 
 @Composable
 fun ItemCoin(coin: Coin, onItemClick: (Coin) -> Unit){
     val format = NumberFormat.getCurrencyInstance(Locale("en", "US"))
+    val df = DecimalFormat("0.##")
 
     Row(modifier = Modifier
         .fillMaxWidth()
         .clickable { onItemClick(coin) }
-        .padding(16.dp),
+        .padding(PADDING_MAIN),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
+        horizontalArrangement = Arrangement.spacedBy(PADDING_HALF)
     ) {
         AsyncImage(
-            modifier = Modifier.size(32.dp),
+            modifier = Modifier.clip(RoundedCornerShape(PADDING_EXTRA)).size(48.dp),
             contentDescription = coin.name,
             model = coin.iconUrl,
             placeholder = painterResource(R.drawable.img_placeholder),
             error = painterResource(R.drawable.img_placeholder),
         )
+        Column(
+            modifier = Modifier.padding(start = PADDING_HALF).weight(2f)
+        ) {
+            Text(
+                text = coin.name,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Bold
+                ),
+            )
+            Text(
+                text = coin.symbol,
+                style = MaterialTheme.typography.bodySmall.copy(
+                    color = MaterialTheme.colorScheme.outline
+                ),
 
-        Text(
-            modifier = Modifier.weight(2f),
-            text = "${coin.name} (${coin.symbol})",
-            style = MaterialTheme.typography.bodyMedium,
-            overflow = TextOverflow.Ellipsis
-        )
+            )
+        }
 
         if(coin.sparkline.isNotEmpty()){
             LineChart(
-                modifier = Modifier.height(24.dp).weight(1f),
+                modifier = Modifier
+                    .height(24.dp)
+                    .weight(1f),
                 list = coin.sparkline.mapNotNull { it }
             )
         }
 
-        Text(
+        Column(
             modifier = Modifier.weight(1f),
-            text = format.format(coin.price),
-            style = MaterialTheme.typography.bodyMedium.copy(
-                fontWeight = FontWeight.Bold
-            ),
-            overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.End,
-            minLines = 1
-        )
+            horizontalAlignment = Alignment.End,
+        ) {
+            Text(
+                text = format.format(coin.price),
+                style = MaterialTheme.typography.bodyMedium.copy(),
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.End,
+                minLines = 1
+            )
+            Text(
+                text = "${if(coin.percentageIncrease() > 0) "+" else ""}${df.format(coin.percentageIncrease())}%",
+                style = MaterialTheme.typography.bodySmall.copy(
+                    color = if(coin.percentageIncrease() >= 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+                    fontWeight = FontWeight.Bold
+                )
+            )
+        }
     }
 }
 
@@ -83,39 +110,60 @@ fun ItemCoinLoading(){
 
     Row(modifier = Modifier
         .fillMaxWidth()
-        .padding(16.dp),
+        .padding(PADDING_MAIN),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
+        horizontalArrangement = Arrangement.spacedBy(PADDING_HALF)
     ) {
         Box(
             modifier = Modifier
-                .clip(shape = RoundedCornerShape(32.dp))
+                .clip(shape = RoundedCornerShape(PADDING_EXTRA))
                 .background(color = Color.Gray)
                 .shimmerBackground()
-                .size(32.dp),
+                .size(48.dp),
         )
-
-        Text(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .shimmerBackground(),
-            text = "${coin.name} (${coin.symbol})",
-            style = MaterialTheme.typography.bodyMedium.copy(
-                color = Color.Gray,
-                background = Color.Gray
-            ),
-            overflow = TextOverflow.Ellipsis
-        )
+        Column(
+            modifier = Modifier.padding(start = PADDING_HALF).weight(2f)
+        ) {
+            Text(
+                modifier = Modifier.shimmerBackground(),
+                text = coin.name,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = Color.Gray,
+                    background = Color.Gray
+                ),
+            )
+            Text(
+                modifier = Modifier.shimmerBackground(),
+                text = coin.symbol,
+                style = MaterialTheme.typography.bodySmall.copy(
+                    color = Color.Gray,
+                    background = Color.Gray
+                )
+            )
+        }
         Spacer(modifier = Modifier.weight(1f))
-        Text(
-            modifier = Modifier.shimmerBackground(),
-            text = format.format(coin.price),
-            style = MaterialTheme.typography.bodyMedium.copy(
-                color = Color.Gray,
-                background = Color.Gray
-            ),
-            overflow = TextOverflow.Ellipsis,
-            minLines = 1
-        )
+        Column(
+            modifier = Modifier.padding(start = PADDING_HALF).weight(2f),
+            horizontalAlignment = Alignment.End,
+        ) {
+            Text(
+                modifier = Modifier.shimmerBackground(),
+                text = format.format(coin.price),
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = Color.Gray,
+                    background = Color.Gray
+                ),
+                overflow = TextOverflow.Ellipsis,
+                minLines = 1
+            )
+            Text(
+                modifier = Modifier.shimmerBackground(),
+                text = "+0%",
+                style = MaterialTheme.typography.bodySmall.copy(
+                    color = Color.Gray,
+                    background = Color.Gray
+                )
+            )
+        }
     }
 }
