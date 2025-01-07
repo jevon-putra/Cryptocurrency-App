@@ -11,15 +11,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jop.cointracker.ui.theme.CoinTrackerTheme
 import com.jop.cointracker.ui.theme.PADDING_12
 import com.jop.cointracker.ui.theme.PADDING_EXTRA
-import com.jop.cointracker.ui.theme.PADDING_HALF
-import com.jop.cointracker.ui.theme.PADDING_MAIN
 
 @Composable
 fun CustomButtonPrimary(modifier: Modifier = Modifier, text: String, action: () -> Unit){
@@ -28,15 +25,15 @@ fun CustomButtonPrimary(modifier: Modifier = Modifier, text: String, action: () 
         onClick = { action() },
         shape = RoundedCornerShape(PADDING_EXTRA),
         colors = ButtonDefaults.buttonColors().copy(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary
+            containerColor = MaterialTheme.colorScheme.primary
         )
     ) {
         Text(
             modifier = Modifier.padding(horizontal = PADDING_12),
             text = text,
             style = MaterialTheme.typography.bodyMedium.copy(
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimary
             )
         )
     }
@@ -50,15 +47,15 @@ fun CustomButtonOutlinePrimary(modifier: Modifier = Modifier, text: String, acti
         onClick = { action() },
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
         colors = ButtonDefaults.buttonColors().copy(
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.primary
+            containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
         Text(
             modifier = Modifier.padding(horizontal = PADDING_12),
             text = text,
             style = MaterialTheme.typography.bodyMedium.copy(
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
             )
         )
     }
@@ -69,7 +66,7 @@ fun CustomButtonOutlinePrimary(modifier: Modifier = Modifier, text: String, acti
 @Composable
 fun PreviewCustomButtonPrimary(){
     CoinTrackerTheme {
-        CustomButtonPrimary(text = "Test") {
+        CustomButtonPrimary(text = "Filter") {
 
         }
     }
@@ -81,7 +78,7 @@ fun PreviewCustomButtonPrimary(){
 @Composable
 fun PreviewCustomButtonOutlinePrimary(){
     CoinTrackerTheme {
-        CustomButtonOutlinePrimary(text = "Test") {
+        CustomButtonOutlinePrimary(text = "Filter") {
 
         }
     }

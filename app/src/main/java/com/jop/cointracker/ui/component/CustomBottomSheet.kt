@@ -15,7 +15,8 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -27,13 +28,13 @@ import com.jop.cointracker.ui.theme.PADDING_MAIN
 @Composable
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 fun FilterBottomSheet(state: SheetState, showBottomSheet: MutableState<Boolean>,
-                      stateSelectedTags: SnapshotStateList<Tag>, confirmOrClearAction: (Boolean) -> Unit
+                      selectedTags: MutableList<Tag>, confirmOrClearAction: (Boolean, List<Tag>) -> Unit
 ){
+    val stateSelectedTags = remember { mutableStateListOf<Tag>() }.apply { addAll(selectedTags) }
+
     ModalBottomSheet(
         sheetState = state,
-        onDismissRequest = {
-            showBottomSheet.value = false
-        }
+        onDismissRequest = { showBottomSheet.value = false }
     ) {
         Column(
             modifier = Modifier.padding(bottom = PADDING_MAIN),
@@ -43,7 +44,7 @@ fun FilterBottomSheet(state: SheetState, showBottomSheet: MutableState<Boolean>,
                 modifier = Modifier.fillMaxWidth(),
                 text = "Filter",
                 style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.ExtraBold
                 ),
                 textAlign = TextAlign.Center
             )
@@ -64,7 +65,9 @@ fun FilterBottomSheet(state: SheetState, showBottomSheet: MutableState<Boolean>,
                 }
             }
             Row(
-                modifier = Modifier.padding(horizontal = PADDING_MAIN).fillMaxWidth(),
+                modifier = Modifier
+                    .padding(horizontal = PADDING_MAIN)
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(PADDING_MAIN)
             ) {
                 CustomButtonOutlinePrimary(
@@ -72,14 +75,14 @@ fun FilterBottomSheet(state: SheetState, showBottomSheet: MutableState<Boolean>,
                     text = "Reset Filter"
                 ) {
                     showBottomSheet.value = false
-                    confirmOrClearAction(false)
+                    confirmOrClearAction(false, listOf())
                 }
                 CustomButtonPrimary(
                     modifier = Modifier.weight(1f),
                     text = "Apply Filter"
                 ) {
                     showBottomSheet.value = false
-                    confirmOrClearAction(true)
+                    confirmOrClearAction(true, stateSelectedTags)
                 }
             }
         }

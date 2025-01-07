@@ -25,20 +25,19 @@ fun ChipTag(tag: Tag, isSelected: Boolean = false, onSelectionChanged: (Tag) -> 
         modifier = Modifier
             .clip(RoundedCornerShape(PADDING_MAIN))
             .border(
-                width = 2.dp,
-                color = if(isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerHighest,
+                width = 1.dp,
+                color = if(isSelected) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceContainerHighest,
                 shape = RoundedCornerShape(PADDING_MAIN)
             )
-            .background(if(isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)else MaterialTheme.colorScheme.surface)
-            .padding(horizontal = PADDING_MAIN, vertical = PADDING_HALF)
             .toggleable(
                 value = isSelected,
-                onValueChange = { onSelectionChanged(tag)
-            }
-        ),
+                onValueChange = { onSelectionChanged(tag) }
+            )
+            .background(if(isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface)
+            .padding(horizontal = PADDING_MAIN, vertical = PADDING_HALF),
         text = tag.title,
         style = MaterialTheme.typography.bodySmall,
-        color = if(isSelected) surfaceLight else MaterialTheme.colorScheme.onSurface,
+        color = if(isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
     )
 }
 
