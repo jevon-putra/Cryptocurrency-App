@@ -25,7 +25,6 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -38,12 +37,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.jop.cointracker.R
-import com.jop.cointracker.data.model.Tag
 import com.jop.cointracker.ui.component.EmptyStateScreen
 import com.jop.cointracker.ui.component.ErrorStateScreen
 import com.jop.cointracker.ui.component.FilterBottomSheet
 import com.jop.cointracker.ui.component.ItemCoin
-import com.jop.cointracker.ui.component.ItemCoinLoading
 import com.jop.cointracker.ui.component.SearchTextField
 import com.jop.cointracker.ui.route.Route
 import com.jop.cointracker.ui.theme.PADDING_EXTRA
@@ -54,12 +51,10 @@ import com.jop.cointracker.view.home.viewModel.HomeViewModel
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun HomeScreen(navHostController: NavHostController, homeVM: HomeViewModel = hiltViewModel()){
-    val etSearch = remember { mutableStateOf("") }
     val stateData = homeVM.state.value
     val focusManager = LocalFocusManager.current
     val refreshState = rememberPullToRefreshState()
     val showBottomSheet = remember { mutableStateOf(false) }
-    val stateSelectedTags = remember { mutableStateListOf<Tag>() }
     val stateBottomSheet = rememberModalBottomSheetState()
 
     Box(modifier = Modifier
@@ -76,10 +71,10 @@ fun HomeScreen(navHostController: NavHostController, homeVM: HomeViewModel = hil
             ) {
                 SearchTextField(
                     modifier = Modifier.weight(1f),
-                    state = etSearch,
+                    state = homeVM.stateSearchKeyword,
                     keyboardActions = KeyboardActions(
                         onSearch = {
-                            homeVM.getCoins(refresh = true, keyword = etSearch.value, tags = stateSelectedTags.toList())
+                            homeVM.getCoins(refresh = true)
                         }
                     )
                 )
@@ -113,7 +108,7 @@ fun HomeScreen(navHostController: NavHostController, homeVM: HomeViewModel = hil
                     )
                 },
                 onRefresh = {
-                    homeVM.getCoins(refresh = true, keyword = etSearch.value, tags = stateSelectedTags.toList())
+                    homeVM.getCoins(refresh = true)
                 }
             ) {
                 LazyColumn(
@@ -141,7 +136,7 @@ fun HomeScreen(navHostController: NavHostController, homeVM: HomeViewModel = hil
 
                     if(stateData.isLoading){
                         items(count = 20) {
-                            ItemCoinLoading()
+                            ItemCoin(isLoading = true){}
                         }
                     } else {
                         stateData.data?.size?.let {
@@ -164,7 +159,7 @@ fun HomeScreen(navHostController: NavHostController, homeVM: HomeViewModel = hil
 
                     if(stateData.isPaginationLoading){
                         items(count = 3) {
-                            ItemCoinLoading()
+                            ItemCoin(isLoading = true){}
                         }
                     }
                 }
@@ -175,12 +170,12 @@ fun HomeScreen(navHostController: NavHostController, homeVM: HomeViewModel = hil
             FilterBottomSheet(
                 state = stateBottomSheet,
                 showBottomSheet = showBottomSheet,
-                selectedTags = stateSelectedTags,
+                selectedTags = homeVM.stateTags,
                 confirmOrClearAction = { isConfirm, selected ->
-                    stateSelectedTags.clear()
-                    if(isConfirm) stateSelectedTags.addAll(selected)
+                    homeVM.stateTags
+                    if(isConfirm) homeVM.stateTags.addAll(selected)
 
-                    homeVM.getCoins(refresh = true, keyword = etSearch.value, tags = stateSelectedTags.toList())
+                    homeVM.getCoins(refresh = true)
                 },
             )
         }
