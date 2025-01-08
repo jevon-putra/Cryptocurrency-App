@@ -1,7 +1,9 @@
 package com.jop.cointracker.view.home.viewModel
 
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jop.cointracker.data.BaseState
@@ -18,16 +20,18 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(private val repository: CoinRepository) : ViewModel(){
     private val _state = mutableStateOf(BaseState<MutableList<Coin>>())
     val state : State<BaseState<MutableList<Coin>>> = _state
+    val stateTags = mutableStateListOf<Tag>()
+    val stateSearchKeyword = mutableStateOf("")
     val maxItem = 20
 
     init {
         getCoins(true)
     }
 
-    fun getCoins(refresh: Boolean = false, keyword: String = "", tags: List<Tag> = listOf()){
+    fun getCoins(refresh: Boolean = false){
         val lastIndex = if(refresh) 0 else _state.value.data!!.size
 
-        repository.getCoins(limit = maxItem, offset = lastIndex, symbol = keyword, tags = tags.map { it.value }).onEach {
+        repository.getCoins(limit = maxItem, offset = lastIndex, symbol = stateSearchKeyword.value, tags = stateTags.map { it.value }).onEach {
             when(it){
                 is Resource.Loading -> {
                     if(refresh) _state.value = BaseState(isLoading = true)

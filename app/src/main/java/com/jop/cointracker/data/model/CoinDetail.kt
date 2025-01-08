@@ -24,9 +24,9 @@ data class CoinDetail(
     @SerializedName("numberOfExchanges")
     val numberOfExchanges: Int = 0,
     @SerializedName("24hVolume")
-    val hVolume: String = "",
+    val hVolume: Double = 0.0,
     @SerializedName("marketCap")
-    val marketCap: String = "",
+    val marketCap: Double = 0.0,
     @SerializedName("fullyDilutedMarketCap")
     val fullyDilutedMarketCap: String = "",
     @SerializedName("price")
@@ -65,16 +65,16 @@ data class CoinDetail(
         @SerializedName("supplyAt")
         val supplyAt: Int = 0,
         @SerializedName("max")
-        val max: String = "",
+        val max: Double = 0.0,
         @SerializedName("total")
-        val total: String = "",
+        val total: Double = 0.0,
         @SerializedName("circulating")
-        val circulating: String = ""
+        val circulating: Double = 0.0
     )
 
     data class AllTimeHigh(
         @SerializedName("price")
-        val price: String = "",
+        val price: Double = 0.0,
         @SerializedName("timestamp")
         val timestamp: Int = 0
     )

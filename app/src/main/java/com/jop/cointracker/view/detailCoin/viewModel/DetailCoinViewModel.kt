@@ -27,8 +27,8 @@ class DetailCoinViewModel @Inject constructor(private val repository: CoinReposi
     val percentageIncrease: MutableState<Double> = _percentageIncrease
     val coin: MutableState<Coin?> = mutableStateOf(null)
 
-    fun getCoinDetail(uuid: String){
-        repository.getCoinDetail(uuid).onEach {
+    fun getCoinDetail(){
+        repository.getCoinDetail(coin.value?.uuid ?: "").onEach {
             when(it){
                 is Resource.Loading -> {
                     _stateDetailCoin.value = BaseState(isLoading = true)
