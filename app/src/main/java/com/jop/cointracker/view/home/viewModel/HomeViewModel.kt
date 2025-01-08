@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.jop.cointracker.data.BaseState
 import com.jop.cointracker.data.Resource
 import com.jop.cointracker.data.model.Coin
+import com.jop.cointracker.data.model.Tag
 import com.jop.cointracker.data.repository.CoinRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -15,21 +16,26 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(private val repository: CoinRepository) : ViewModel(){
-    private val _state = mutableStateOf(BaseState<List<Coin>>())
-    val state : State<BaseState<List<Coin>>> = _state
+    private val _state = mutableStateOf(BaseState<MutableList<Coin>>())
+    val state : State<BaseState<MutableList<Coin>>> = _state
+    val maxItem = 20
 
     init {
-        getCoins()
+        getCoins(true)
     }
 
-    fun getCoins(){
-        repository.getCoins(_state.value.data?.lastIndex ?: 0).onEach {
+    fun getCoins(refresh: Boolean = false, keyword: String = "", tags: List<Tag> = listOf()){
+        val lastIndex = if(refresh) 0 else _state.value.data!!.size
+
+        repository.getCoins(limit = maxItem, offset = lastIndex, symbol = keyword, tags = tags.map { it.value }).onEach {
             when(it){
                 is Resource.Loading -> {
-                    _state.value = BaseState(isLoading = true)
+                    if(refresh) _state.value = BaseState(isLoading = true)
+                    else _state.value = BaseState(isPaginationLoading = true, data = _state.value.data)
                 }
                 is Resource.Success -> {
-                    _state.value = BaseState(data = it.data)
+                    if(refresh) _state.value = BaseState(data = it.data?.toMutableList())
+                    else _state.value = BaseState(data = _state.value.data?.apply { addAll(it.data ?: mutableListOf()) })
                 }
                 is Resource.Error -> {
                     _state.value = BaseState(error = it.message ?: "")
