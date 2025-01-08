@@ -15,35 +15,86 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
+import java.text.NumberFormat
+import java.util.Locale
 
-fun Modifier.shimmerBackground(): Modifier = composed {
-    val transition = rememberInfiniteTransition(label = "shimmer")
+fun Modifier.shimmerBackground(isLoading: Boolean = true): Modifier = composed {
+    var shimmer: Brush? = null
+    val shimmerColor = MaterialTheme.colorScheme.primary
+    val backgroundColor = MaterialTheme.colorScheme.surface
 
-    val translateAnimation by transition.animateFloat(
-        initialValue = 0f,
-        targetValue = 400f,
-        animationSpec = infiniteRepeatable(
-            tween(durationMillis = 1500, easing = LinearOutSlowInEasing),
-            RepeatMode.Restart
-        ),
-        label = "shimmer",
-    )
+    if(isLoading){
+        val transition = rememberInfiniteTransition(label = "shimmer")
 
-    val shimmerColors = listOf(
-        Color.Transparent,
-        MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
-        Color.Transparent,
-    )
+        val translateAnimation by transition.animateFloat(
+            initialValue = 0f,
+            targetValue = 400f,
+            animationSpec = infiniteRepeatable(
+                tween(durationMillis = 1500, easing = LinearOutSlowInEasing),
+                RepeatMode.Restart
+            ),
+            label = "shimmer",
+        )
 
-    val brush = Brush.linearGradient(
-        colors = shimmerColors,
-        start = Offset(translateAnimation, translateAnimation),
-        end = Offset(translateAnimation + 85f, translateAnimation + 85f),
-        tileMode = TileMode.Mirror,
-    )
+        val shimmerColors = listOf(
+            Color.Transparent,
+            shimmerColor.copy(alpha = 0.5f),
+            Color.Transparent,
+        )
+
+        shimmer = Brush.linearGradient(
+            colors = shimmerColors,
+            start = Offset(translateAnimation, translateAnimation),
+            end = Offset(translateAnimation + 85f, translateAnimation + 85f),
+            tileMode = TileMode.Mirror,
+        )
+    }
 
     Modifier.drawWithContent {
         drawContent()
-        drawRect(brush = brush)
+        if(shimmer != null){
+            drawRect(color = backgroundColor)
+            drawRect(brush = shimmer)
+        }
     }
 }
+
+fun Double.formatSupplyCrypto(): String{
+    val suffixes = listOf("", "", "million", "billion", "trillion")
+    var index = 0
+    var value = this
+
+    while (value >= 1000) {
+        value /= 1000
+        index++
+    }
+
+    val formattedNumber = String.format("%.2f", value)
+    return if(this > 0) "$formattedNumber ${suffixes[index]}" else "--"
+}
+
+fun Double.formatNumberShort(): String{
+    val suffixes = listOf("", "K", "M", "B", "T")
+    var index = 0
+    var value = this
+
+    while (value >= 1000) {
+        value /= 1000
+        index++
+    }
+
+    val formattedNumber = String.format("%.2f", value)
+    return "$formattedNumber${suffixes[index]}"
+}
+
+fun Double.formatCurrencyNumber(): String{
+    val formatedNumber = String.format("%.3f", this)
+    val formatCurrency = NumberFormat.getCurrencyInstance(Locale("en", "US"))
+
+    if(formatedNumber.endsWith(".000") && this < 1){
+        formatCurrency.minimumFractionDigits = 7
+    }
+
+    return formatCurrency.format(this)
+}
+
