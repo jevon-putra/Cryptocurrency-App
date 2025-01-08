@@ -1,6 +1,5 @@
 package com.jop.cointracker.ui.component
 
-import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.padding
@@ -11,43 +10,34 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.jop.cointracker.data.model.Tag
-import com.jop.cointracker.ui.theme.CoinTrackerTheme
 import com.jop.cointracker.ui.theme.PADDING_HALF
 import com.jop.cointracker.ui.theme.PADDING_MAIN
-import com.jop.cointracker.ui.theme.surfaceLight
+import com.jop.cointracker.util.shimmerBackground
 
 @Composable
-fun ChipTag(tag: Tag, isSelected: Boolean = false, onSelectionChanged: (Tag) -> Unit){
+fun ChipTag(modifier: Modifier = Modifier, tag: Tag, isSelected: Boolean = false, isLoading: Boolean = false, onSelectionChanged: (Tag) -> Unit){
     Text(
-        modifier = Modifier
+        modifier = modifier
             .clip(RoundedCornerShape(PADDING_MAIN))
             .border(
                 width = 1.dp,
-                color = if(isSelected) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceContainerHighest,
+                color = if (isSelected) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceContainerHighest,
                 shape = RoundedCornerShape(PADDING_MAIN)
             )
             .toggleable(
                 value = isSelected,
                 onValueChange = { onSelectionChanged(tag) }
             )
-            .background(if(isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface)
+            .background(if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface)
+            .shimmerBackground(isLoading)
             .padding(horizontal = PADDING_MAIN, vertical = PADDING_HALF),
         text = tag.title,
-        style = MaterialTheme.typography.bodySmall,
+        style = MaterialTheme.typography.bodySmall.copy(
+            fontWeight = if(isSelected) FontWeight.Bold else FontWeight.Normal
+        ),
         color = if(isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
     )
-}
-
-@Preview
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun PreviewChipTag(){
-    CoinTrackerTheme {
-        ChipTag(tag = Tag("Hello", "hello"), isSelected = true) {
-
-        }
-    }
 }
