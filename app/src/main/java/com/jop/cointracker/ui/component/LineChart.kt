@@ -4,6 +4,8 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -11,6 +13,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.asAndroidPath
 import androidx.compose.ui.graphics.asComposePath
@@ -25,56 +28,76 @@ fun LineChart(modifier: Modifier = Modifier, list: List<Double> = listOf(), isSh
     val last = if(list.isNotEmpty()) list.last() else 0.0
     val max = if(list.isNotEmpty()) list.max() else 0.0
     val min = if(list.isNotEmpty()) list.min() else 0.0
+    val colorUpTrend = MaterialTheme.colorScheme.primary
+    val colorDownTrend = MaterialTheme.colorScheme.error
+    val colorDivider = MaterialTheme.colorScheme.outline
 
-    Row(
+    Box(
         modifier = modifier
     ) {
-        for (pair in zipList) {
-            val color = if((!isShowDifference && last > first) || (isShowDifference && pair.second > first)) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
-            val fromValuePercentage = getValuePercentageForRange(pair.first, max, min)
-            val toValuePercentage = getValuePercentageForRange(pair.second, max, min)
+        if(isShowDifference){
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                val firstValuePercentage = getValuePercentageForRange(first, max, min)
+                val getFirstHeightValue = size.height.times(1 - firstValuePercentage).toFloat()
 
-            Canvas(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .weight(1f),
-                onDraw = {
-                    val spacing = size.width / list.size
-                    val fromPoint = Offset(x = 0f, y = size.height.times(1 - fromValuePercentage).toFloat())
-                    val toPoint = Offset(x = size.width, y = size.height.times(1 - toValuePercentage).toFloat())
+                drawLine(
+                    color = colorDivider,
+                    strokeWidth = 1f,
+                    pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f),
+                    start = Offset(x = 0f, y = getFirstHeightValue),
+                    end = Offset(x = size.width, y = getFirstHeightValue),
+                )
+            }
+        }
 
-                    val strokePath = Path().apply {
-                        moveTo(fromPoint.x , fromPoint.y)
-                        cubicTo(fromPoint.x + spacing, fromPoint.y, toPoint.x - spacing, toPoint.y, toPoint.x, toPoint.y)
-                    }
+        Row(modifier = modifier.fillMaxWidth()) {
+            for (pair in zipList) {
+                val color = if((!isShowDifference && last > first) || (isShowDifference && pair.second > first)) colorUpTrend else colorDownTrend
+                val fromValuePercentage = getValuePercentageForRange(pair.first, max, min)
+                val toValuePercentage = getValuePercentageForRange(pair.second, max, min)
 
-                    drawPath(
-                        path = strokePath,
-                        color = color,
-                        style = Stroke(
-                            width = 1.dp.toPx(),
-                            cap = StrokeCap.Round
-                        )
-                    )
+                Canvas(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .weight(1f),
+                    onDraw = {
+                        val spacing = size.width / list.size
+                        val fromPoint = Offset(x = 0f, y = size.height.times(1 - fromValuePercentage).toFloat())
+                        val toPoint = Offset(x = size.width, y = size.height.times(1 - toValuePercentage).toFloat())
 
-                    val fillPath = android.graphics.Path(strokePath.asAndroidPath())
-                        .asComposePath()
-                        .apply {
-                            lineTo(size.width, size.height)
-                            lineTo(0f, size.height)
-                            close()
+                        val strokePath = Path().apply {
+                            moveTo(fromPoint.x , fromPoint.y)
+                            cubicTo(fromPoint.x + spacing, fromPoint.y, toPoint.x - spacing, toPoint.y, toPoint.x, toPoint.y)
                         }
-                    drawPath(
-                        fillPath,
-                        brush = Brush.verticalGradient(
-                            listOf(
-                                color,
-                                Color.Transparent,
+
+                        drawPath(
+                            path = strokePath,
+                            color = color,
+                            style = Stroke(
+                                width = 1.dp.toPx(),
+                                cap = StrokeCap.Round
+                            )
+                        )
+
+                        val fillPath = android.graphics.Path(strokePath.asAndroidPath())
+                            .asComposePath()
+                            .apply {
+                                lineTo(size.width, size.height)
+                                lineTo(0f, size.height)
+                                close()
+                            }
+                        drawPath(
+                            fillPath,
+                            brush = Brush.verticalGradient(
+                                listOf(
+                                    color,
+                                    Color.Transparent,
+                                ),
                             ),
-                        ),
-                    )
-                }
-            )
+                        )
+                    }
+                )
+            }
         }
     }
 }
@@ -85,6 +108,6 @@ private fun getValuePercentageForRange(value: Double, max: Double, min: Double) 
 @Composable
 fun PreviewLineChart(){
     Box {
-        LineChart()
+        LineChart(isShowDifference = true)
     }
 }
